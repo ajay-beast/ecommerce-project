@@ -9,19 +9,23 @@ import com.ajay.ecommerce.entity.OrderItem;
 import jakarta.transaction.Transactional;
 import java.util.Set;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class CheckoutServiceImpl implements CheckoutService {
+  private static final Logger logger = LoggerFactory.getLogger(CheckoutServiceImpl.class);
 
-    private CustomerRepository customerRepository;
+  private CustomerRepository customerRepository;
 
     public CheckoutServiceImpl(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
     }
     @Override
     public PurchaseResponse placeOrder(Purchase purchase) {
+      logger.info("purchase: { } " + purchase);
       Order order = purchase.getOrder();
       String orderTrackingNumber = generateOrderTrackingNumber(order);
       order.setOrderTrackingNumber(orderTrackingNumber);
