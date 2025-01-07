@@ -1,6 +1,7 @@
 package com.ajay.ecommerce.config;
 
 import com.ajay.ecommerce.entity.Country;
+import com.ajay.ecommerce.entity.Order;
 import com.ajay.ecommerce.entity.Product;
 import com.ajay.ecommerce.entity.ProductCategory;
 import com.ajay.ecommerce.entity.State;
@@ -41,6 +42,8 @@ public class MyDataRestConfig implements RepositoryRestConfigurer {
     disableHttpMethods(Country.class, config, theUnsupportedActions);
 
     disableHttpMethods(State.class, config, theUnsupportedActions);
+
+    disableHttpMethods(Order.class, config, theUnsupportedActions);
 
     exposeIds(config);
 

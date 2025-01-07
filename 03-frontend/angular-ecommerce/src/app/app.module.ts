@@ -18,12 +18,14 @@ import { LoginStatusComponent } from './components/login-status/login-status.com
 import { OktaAuthModule, OktaCallbackComponent, OKTA_CONFIG } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
 import myAppConfig from './config/my-app-config';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
 
 const oktaConfig=myAppConfig.oidc;
 const oktaAuth = new OktaAuth(oktaConfig);
 
 
 const routes : Routes = [
+  {path : 'order-history',component:OrderHistoryComponent},
   {path : 'login/callback',component:OktaCallbackComponent},
   {path : 'login',component:LoginComponent},
   {path : 'checkout',component:CheckoutComponent},
@@ -48,7 +50,8 @@ const routes : Routes = [
     CartDetailsComponent,
     CheckoutComponent,
     LoginComponent,
-    LoginStatusComponent
+    LoginStatusComponent,
+    OrderHistoryComponent
   ],
   imports: [
     RouterModule.forRoot(routes),

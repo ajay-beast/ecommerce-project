@@ -3,7 +3,9 @@
         Welcome back {{userFullName}}!
     </div>
 
-    <button *ngIf="!isAutheticated" routerLink="/login"  class="security-btn">Login</button>
+    <button *ngIf="!isAutheticated" routerLink="/login"  class="security-btn" style="margin-right: 50px;">Login</button>
 
     <button *ngIf="isAutheticated" class="security-btn" (click)="logOut()">Logout</button>
+
+    <button  routerLink="/order-history" class="security-btn ml-1">Orders</button>
 </div>
