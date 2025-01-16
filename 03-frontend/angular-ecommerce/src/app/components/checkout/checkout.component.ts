@@ -32,7 +32,7 @@ export class CheckoutComponent implements OnInit {
 
   stripe = Stripe(environment.stripePublishableKey);
 
-  paymentInfo: PaymentInfo = new PaymentInfo(this.totalPrice, 'INR');
+  paymentInfo: PaymentInfo = new PaymentInfo(this.totalPrice, 'INR',"");
   cardElement:any;
   displayError:any="";
 
@@ -158,6 +158,7 @@ export class CheckoutComponent implements OnInit {
 
     this.paymentInfo.amount = Math.round(this.totalPrice*100);
     this.paymentInfo.currency="INR";
+    this.paymentInfo.emailReceipt=purchase.customer.email;
 
     console.log(`this.paymentInfo.amount: ${this.paymentInfo.amount}`);
 
