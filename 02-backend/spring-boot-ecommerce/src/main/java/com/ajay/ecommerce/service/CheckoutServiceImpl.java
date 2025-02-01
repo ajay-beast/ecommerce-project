@@ -1,12 +1,13 @@
 package com.ajay.ecommerce.service;
 
-import com.ajay.ecommerce.Dao.CustomerRepository;
+import com.ajay.ecommerce.Dao.OrderRepository;
+import com.ajay.ecommerce.Dao.UserSignupRepository;
 import com.ajay.ecommerce.dto.PaymentInfo;
 import com.ajay.ecommerce.dto.Purchase;
 import com.ajay.ecommerce.dto.PurchaseResponse;
-import com.ajay.ecommerce.entity.Customer;
 import com.ajay.ecommerce.entity.Order;
 import com.ajay.ecommerce.entity.OrderItem;
+import com.ajay.ecommerce.entity.UserSignup;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.PaymentIntent;
@@ -27,11 +28,14 @@ public class CheckoutServiceImpl implements CheckoutService {
 
   private static final Logger logger = LoggerFactory.getLogger(CheckoutServiceImpl.class);
 
-  private CustomerRepository customerRepository;
+  private UserSignupRepository userSignupRepository;
+  private OrderRepository orderRepository;
 
-  public CheckoutServiceImpl(CustomerRepository customerRepository,
+  public CheckoutServiceImpl(UserSignupRepository userSignupRepository,
+      OrderRepository orderRepository,
       @Value("${stripe.key.secret}") String secretKey) {
-    this.customerRepository = customerRepository;
+    this.userSignupRepository = userSignupRepository;
+    this.orderRepository = orderRepository;
     Stripe.apiKey = secretKey;
   }
 
@@ -47,34 +51,33 @@ public class CheckoutServiceImpl implements CheckoutService {
     order.setShippingAddress(purchase.getShippingAddress());
     order.setBillingAddress(purchase.getBillingAddress());
 
-    Customer customer = purchase.getCustomer();
-
-    String email = customer.getEmail();
-    Customer customerFromDB = customerRepository.findByEmail(email);
+    UserSignup customerFromDB = userSignupRepository.findOneByUserName(purchase.getUsername());
 
     if (customerFromDB != null) {
-      customer = customerFromDB;
+      order.setUser(customerFromDB);
+      orderRepository.save(order);
+      return new PurchaseResponse(orderTrackingNumber);
+    } else{
+      throw new RuntimeException("User not found");
     }
 
-    customer.add(order);
-    customerRepository.save(customer);
-    return new PurchaseResponse(orderTrackingNumber);
+
   }
 
   @Override
   public PaymentIntent createPaymentIntent(PaymentInfo paymentInfo) throws StripeException {
-    try{
+    try {
       List<String> paymentMethodTypes = List.of("card");
       Map<String, Object> params = new HashMap<>();
-      params.put("amount",paymentInfo.getAmount());
-      params.put("currency",paymentInfo.getCurrency());
-      params.put("payment_method_types",paymentMethodTypes);
-      params.put("description","Bazaar's Purchase");
-      params.put("receipt_email",paymentInfo.getEmailReceipt());
+      params.put("amount", paymentInfo.getAmount());
+      params.put("currency", paymentInfo.getCurrency());
+      params.put("payment_method_types", paymentMethodTypes);
+      params.put("description", "Bazaar's Purchase");
+      params.put("receipt_email", paymentInfo.getEmailReceipt());
       return PaymentIntent.create(params);
-    } catch (Exception e){
+    } catch (Exception e) {
       logger.error(e.getMessage());
-      throw  e;
+      throw e;
     }
   }
 

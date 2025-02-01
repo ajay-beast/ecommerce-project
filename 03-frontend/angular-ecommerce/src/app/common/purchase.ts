@@ -9,4 +9,5 @@ export class Purchase {
     billingAddress!: Address;
     order!: Order;
     orderItems!: OrderItem[];
+    username: string = "";
 }

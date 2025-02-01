@@ -46,9 +46,9 @@ public class Order {
   @OneToMany(cascade = CascadeType.ALL, mappedBy = "order")
   private Set<OrderItem> orderItems = new HashSet<>();
 
-  @ManyToOne
-  @JoinColumn(name = "customer_id")
-  private Customer customer;
+//  @ManyToOne
+//  @JoinColumn(name = "customer_id")
+//  private Customer customer;
 
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "shipping_address_id", referencedColumnName = "id")
@@ -57,6 +57,10 @@ public class Order {
   @OneToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "billing_address_id", referencedColumnName = "id")
   private Address billingAddress;
+
+  @ManyToOne
+  @JoinColumn(name="user_name", referencedColumnName = "user_name")
+  private UserSignup user;
 
   public void add(OrderItem orderItem) {
     if (orderItem != null) {

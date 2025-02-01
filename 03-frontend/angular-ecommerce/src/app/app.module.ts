@@ -19,14 +19,17 @@ import { OktaAuthModule, OktaCallbackComponent, OKTA_CONFIG } from '@okta/okta-a
 import { OktaAuth } from '@okta/okta-auth-js';
 import myAppConfig from './config/my-app-config';
 import { OrderHistoryComponent } from './components/order-history/order-history.component';
+import { RegisterComponent } from './components/register/register.component';
+import { FormsModule } from '@angular/forms';
 
 const oktaConfig=myAppConfig.oidc;
 const oktaAuth = new OktaAuth(oktaConfig);
 
 
 const routes : Routes = [
+  {path : 'register',component:RegisterComponent},
+  {path : 'login',component:LoginComponent},
   {path : 'order-history',component:OrderHistoryComponent},
-  {path : 'login/callback',component:OktaCallbackComponent},
   {path : 'login',component:LoginComponent},
   {path : 'checkout',component:CheckoutComponent},
   {path : 'cart-details',component:CartDetailsComponent},
@@ -51,7 +54,8 @@ const routes : Routes = [
     CheckoutComponent,
     LoginComponent,
     LoginStatusComponent,
-    OrderHistoryComponent
+    OrderHistoryComponent,
+    RegisterComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -59,8 +63,8 @@ const routes : Routes = [
     HttpClientModule,
     NgbModule,
     ReactiveFormsModule,
-    OktaAuthModule
-    // OktaAuthModule
+    OktaAuthModule,
+    FormsModule
   ],
   providers: [ProductService, {provide: OKTA_CONFIG, useValue: {oktaAuth}}],
   bootstrap: [AppComponent]

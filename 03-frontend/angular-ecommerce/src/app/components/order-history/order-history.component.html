@@ -3,7 +3,7 @@
         <div class="container-fluid">
             <h3>Your Orders</h3>
 
-            <div *ngIf="orderHistoryList.length > 0">
+            <div *ngIf="isAutheticated && orderHistoryList.length > 0">
                 <table class="table table-bordered">
                     <tr>
                         <th width="20%">Order Tracking Number</th>
@@ -19,9 +19,13 @@
                         <td>{{ orderHistory.dateCreated | date: "medium" }}</td>
                 </table>
             </div>
-            <div *ngIf="orderHistoryList.length==0" class="alert alert-warning col-md-12" role="alert">
+            <div *ngIf="isAutheticated && orderHistoryList.length==0" class="alert alert-warning col-md-12" role="alert">
                 No orders found
             </div>
-        </div>
+
+            <div *ngIf="!isAutheticated" class="alert alert-warning col-md-12" role="alert">
+                Please <a [routerLink]="['/login']" class="alert-link">login</a> to view your orders.
+            </div>
+            
     </div>
 </div>

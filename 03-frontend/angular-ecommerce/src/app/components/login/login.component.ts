@@ -1,8 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { OKTA_AUTH } from '@okta/okta-angular';
-import { OktaAuth } from '@okta/okta-auth-js';
-import myAppConfig from 'src/app/config/my-app-config';
-import OktaSignIn from '@okta/okta-signin-widget'; 
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
+import { EmailService } from 'src/app/services/email.service';
 
 @Component({
   selector: 'app-login',
@@ -11,37 +10,45 @@ import OktaSignIn from '@okta/okta-signin-widget';
 })
 export class LoginComponent implements OnInit {
 
-  oktaSignIn:any;
+  credentials:any={
+    username:'',
+    password:''
+  }
 
-  constructor(@Inject(OKTA_AUTH) private oktaAuth:OktaAuth) { 
-    this.oktaSignIn=new OktaSignIn({
-      logo : 'assets/images/products/logo.png',
-      baseUrl: myAppConfig.oidc.issuer.split('/oauth2')[0],
-      clientId:myAppConfig.oidc.clientId,
-      redirectUri:myAppConfig.oidc.redirectUri,
-      authParams:{
-        pkce:true,
-        issuer:myAppConfig.oidc.issuer,
-        scopes: myAppConfig.oidc.scopes
-      }
-      });
+  sessionStorage : Storage=sessionStorage;
+
+  constructor(private authService:AuthService, private router : Router, private emailService:EmailService) { 
+
   }
 
   ngOnInit(): void {
-    this.oktaSignIn.remove();
-    this.oktaSignIn.renderEl({
-      el:'#okta-sign-in-widget'},
-      (response:any)=>{
-        console.log(response);
-        if(response.status==='SUCCESS'){
-          this.oktaAuth.signInWithRedirect();
+
+}
+
+login(){
+  this.authService.login(this.credentials).subscribe(
+    (response)=>{
+     if(response.status === true){
+      console.log('User logged in successfully', response);
+      this.sessionStorage.setItem('username',this.credentials.username)
+      this.authService.makeLogin();
+      this.emailService.getEmailfromUserName(this.credentials.username).subscribe(
+        (emailResponse)=>{
+          console.log('Email fetched successfully', emailResponse);
+          this.sessionStorage.setItem('email',emailResponse.email)
         }
-  },
-  (error:any)=>{
-    console.log(error)
-    throw error; 
-  }
-);
+      )
+      this.router.navigate(['/products']);
+     } else{
+      alert(`Login failed.  ${response.message} try again! `);
+     }
+ 
+    },
+    error =>{
+      console.log(error.message);
+      alert(`Login failed. Please check your credentials and try again!`);
+    }
+  )
 }
 
 }

@@ -1,0 +1,97 @@
+
+  <div class="main-content d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div class="col-md-5">
+      <div *ngIf="!isAutheticated" class="card shadow-lg rounded-3">
+        <div class="card-header text-center bg-success text-white">
+          <h4>Registration</h4>
+        </div>
+        <div class="card-body p-4">
+          <form (ngSubmit)="register()" #registerForm="ngForm">
+            <!-- Username Field -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                [(ngModel)]="user.username"
+                name="username"
+                required
+                minlength="3"
+                #username="ngModel"
+                placeholder="Enter your username"
+              />
+              <div *ngIf="username.invalid && username.touched" class="text-danger mt-1">
+                <small *ngIf="username.errors?.['required']">Username is required.</small>
+                <small *ngIf="username.errors?.['minlength']">Must be at least 3 characters long.</small>
+              </div>
+            </div>
+  
+            <!-- Email Field -->
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                [(ngModel)]="user.email"
+                name="email"
+                required
+                email
+                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+                #email="ngModel"
+                placeholder="Enter your email"
+              />
+              <div *ngIf="email.invalid && email.touched" class="text-danger mt-1">
+                <small *ngIf="email.errors?.['required']">Email is required.</small>
+                <small *ngIf="email.errors?.['pattern']">Invalid email format.</small>
+              </div>
+            </div>
+  
+            <!-- Password Field -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                [(ngModel)]="user.password"
+                name="password"
+                required
+                minlength="8"
+                #password="ngModel"
+                placeholder="Enter your password"
+              />
+              <div *ngIf="password.invalid && password.touched" class="text-danger mt-1">
+                <small *ngIf="password.errors?.['required']">Password is required.</small>
+                <small *ngIf="password.errors?.['minlength']">Must be at least 8 characters long.</small>
+              </div>
+            </div>
+  
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button
+                type="submit"
+                class="btn btn-success btn-lg"
+                [disabled]="registerForm.invalid"
+              >
+                Register
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="card-footer text-center bg-light">
+          <small class="text-muted">
+            Already have an account? 
+            <a [routerLink]="'/login'" class="text-success">Login</a>
+          </small>
+        </div>
+      </div>
+      <div *ngIf="isAutheticated" class="alert alert-warning text-center">
+        Please logout to register. <a [routerLink]="'/products'" class="text-success">Home</a>
+      </div>
+    </div>
+
+  </div>
+
+ 

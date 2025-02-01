@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { OKTA_AUTH, OktaAuthStateService } from '@okta/okta-angular';
 import { OktaAuth } from '@okta/okta-auth-js';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-login-status',
@@ -10,32 +11,38 @@ import { OktaAuth } from '@okta/okta-auth-js';
 export class LoginStatusComponent implements OnInit {
 
   isAutheticated:boolean = false;
-  userFullName:string = "";
+  username:string = "";
+  sessionStorage : Storage=sessionStorage;
 
-  constructor(private oktaAuthService:OktaAuthStateService,@Inject(OKTA_AUTH) private oktaAuth: OktaAuth) { }
+  constructor(private authService:AuthService) { }
 
   ngOnInit(): void {
-    this.oktaAuthService.authState$.subscribe(
-      (result)=>{
-        console.log(result);
-        this.isAutheticated=result.isAuthenticated!;
-        this.getUserDetails();
-      }
-    );
-  }
+    // this.username = this.sessionStorage.getItem('username')!;
+    // if(this.username){
+    //   this.isAutheticated = true;
+    // }
 
-  getUserDetails(){
-    if(this.isAutheticated){
-      this.oktaAuth.getUser().then(
-        (res)=>{
-          this.userFullName=res.name as string;
-        }
-      )
-    }
+    this.authService.isLoggedin.subscribe(
+      (data)=>{
+        this.isAutheticated=data;
+      })
+      console.log(`isAuthenticated: ${this.isAutheticated}`);
+
+      this.authService.username.subscribe(
+        (data)=>{
+          this.username=data;
+        })
+
+      // if(this.isAutheticated){
+      //   this.username = this.sessionStorage.getItem('username')!;
+      // }
   }
 
   logOut(){
-    this.oktaAuth.signOut();
+    this.sessionStorage.removeItem('username');
+    this.sessionStorage.removeItem('email');
+    this.isAutheticated = false;
+    this.authService.makeLogout();
   }
 
 }

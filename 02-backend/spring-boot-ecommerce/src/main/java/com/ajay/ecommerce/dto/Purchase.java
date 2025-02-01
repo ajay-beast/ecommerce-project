@@ -14,4 +14,5 @@ private Address shippingAddress;
 private Address billingAddress;
 private Order order;
 private Set<OrderItem> orderItems;
+private String username;
 }
